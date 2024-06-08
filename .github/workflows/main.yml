@@ -58,6 +58,7 @@ jobs:
         --native-file misc/ci/nofallback.ini
         --native-file misc/ci/linux-x86_64-build-test-ci.ini
         --prefix=$(pwd)/build-test
+
         cat /home/runner/work/taisei/taisei/build/meson-logs/meson-log.txt
 
     - name: Build
