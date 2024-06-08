@@ -2,7 +2,7 @@ name: "Release Builds"
 on:
   push:
     branches:
-      - v[0-9].[0-9]**
+      - master
     tags:
       - v[0-9].[0-9]**
       - v[0-9].[0-9]**-**
@@ -94,6 +94,9 @@ jobs:
         libx11-dev
         libwayland-dev
         python3-docutils
+        binutils-i686-linux-gnu 
+        gcc-i686-linux-gnu
+        g++-i686-linux-gnu
         gnupg
         gcc-10
         g++-10
@@ -131,7 +134,7 @@ jobs:
         meson setup build/linux
         --native-file misc/ci/common-options.ini
         --native-file misc/ci/forcefallback.ini
-        --native-file misc/ci/linux-x86_64-build-release.ini
+        --native-file misc/ci/linux-x86_64-build-test.ini
         --prefix=$(pwd)/build-release
         -Ddeveloper=${{ github.event.inputs.developer || 'false' }}
 
