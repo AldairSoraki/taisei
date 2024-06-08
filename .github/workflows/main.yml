@@ -36,6 +36,7 @@ jobs:
         libsdl2-dev
         binutils-i686-linux-gnu 
         gcc-i686-linux-gnu
+        g++-i686-linux-gnu
         libogg-dev
         libopusfile-dev
         libpng-dev
