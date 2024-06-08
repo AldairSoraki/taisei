@@ -128,7 +128,7 @@ jobs:
         meson setup build/linux
         --native-file misc/ci/common-options.ini
         --native-file misc/ci/forcefallback.ini
-        --native-file misc/ci/linux-x86_64-build-test.ini
+        --native-file misc/ci/linux-x86_64-build-test-ci.ini
         --prefix=$(pwd)/build-release
         -Ddeveloper=${{ github.event.inputs.developer || 'false' }}
 
