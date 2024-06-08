@@ -102,8 +102,8 @@ jobs:
         g++-10
 
         sudo update-alternatives --install
-        /usr/bin/gcc gcc /usr/bin/gcc-10 60 --slave
-        /usr/bin/g++ g++ /usr/bin/g++-10
+        /usr/bin/gcc gcc /usr/bin/i686-linux-gnu-gcc 60 --slave
+        /usr/bin/g++ g++ /usr/bin/i686-linux-gnu-g++
 
         pip install
         meson==${{ env.MESON_VERSION }}
