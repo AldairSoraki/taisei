@@ -1,0 +1,88 @@
+
+name: "Release x86 Builds"
+
+on:
+  push:
+    branches:
+      - v[0-9].[0-9]**
+    tags:
+      - v[0-9].[0-9]**
+      - v[0-9].[0-9]**-**
+
+env:
+  REF: ${{ github.event.inputs.custom-ref || github.ref || 'master' }}
+  MESON_VERSION: '0.63.3'
+  EM_VERSION: '3.1.51'
+  PYTHON_VERSION: '3.11.8'
+  EM_CACHE_FOLDER: 'emsdk'
+  TAISEI_NOPRELOAD: 0
+  TAISEI_PRELOAD_REQUIRED: 1
+  GH_TOKEN: ${{ github.token }}
+
+jobs:
+  linux-release-build-x86:
+    name: "Linux (x86)"
+    runs-on: ubuntu-20.04
+    steps:
+
+    - name: Install Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
+    - name: Install Tools
+      run: >
+        sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+        sudo apt update || true
+        sudo apt install -y -qq build-essential libsdl2-dev libx11-dev libwayland-dev python3-docutils gnupg gcc-10 g++-10
+        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 60 --slave /usr/bin/g++ g++ /usr/bin/g++-10
+        pip install meson==${{ env.MESON_VERSION }} ninja zstandard python-gnupg
+
+    - name: Import GPG Key
+      uses: taisei-project/ghaction-import-gpg@v6
+      with:
+        gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+        passphrase: ${{ secrets.GPG_PASSPHRASE }}
+
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      with:
+        submodules: 'recursive'
+        fetch-depth: 0
+        ref: ${{ env.REF }}
+
+    - name: Configure
+      run: >
+        git config --global --add safe.directory $(pwd)
+        git fetch --force --tags
+        meson setup build/linux-x86
+        --native-file misc/ci/common-options.ini
+        --native-file misc/ci/forcefallback.ini
+        --native-file misc/ci/linux-x86-build-release.ini
+        --prefix=$(pwd)/build-release
+        -Ddeveloper=false
+        -Dcpu=i686
+
+    - name: Set Package Version
+      run: |
+        echo BUILD_VERSION=$($(pwd)/scripts/version.py) >> $GITHUB_ENV
+      shell: bash
+
+    - name: Build
+      run: |
+        echo "Version set to ${{ env.BUILD_VERSION }}"
+        meson compile -C build/linux-x86 --verbose
+        meson install -C build/linux-x86
+
+    - name: Package (Binary)
+      run: |
+        ninja txz -C build/linux-x86 --verbose
+        scripts/sign-release.py build/linux-x86/Taisei-${{ env.BUILD_VERSION }}-linux-x86.tar.xz
+
+    - name: Upload Artifact (Binary)
+      uses: actions/upload-artifact@v4
+      if: success()
+      with:
+        name: linux-x86-${{ env.BUILD_VERSION }}-txz
+        path: build/linux-x86/Taisei-${{ env.BUILD_VERSION }}-linux-x86.tar.xz*
+        if-no-files-found: error
