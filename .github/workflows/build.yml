@@ -35,19 +35,6 @@ jobs:
         sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 60 --slave /usr/bin/g++ g++ /usr/bin/g++-10
         pip install meson==${{ env.MESON_VERSION }} ninja zstandard python-gnupg
 
-    - name: Import GPG Key
-      uses: taisei-project/ghaction-import-gpg@v6
-      with:
-        gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
-        passphrase: ${{ secrets.GPG_PASSPHRASE }}
-
-    - name: Checkout Code
-      uses: actions/checkout@v4
-      with:
-        submodules: 'recursive'
-        fetch-depth: 0
-        ref: ${{ env.REF }}
-
     - name: Configure
       run: >
         git config --global --add safe.directory $(pwd)
