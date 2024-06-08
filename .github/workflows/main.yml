@@ -34,6 +34,7 @@ jobs:
         sudo apt install -y -qq
         build-essential
         libsdl2-dev
+        binutils-i686-linux-gnu 
         libogg-dev
         libopusfile-dev
         libpng-dev
