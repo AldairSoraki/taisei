@@ -111,12 +111,6 @@ jobs:
         zstandard
         python-gnupg
 
-    - name: Import GPG Key
-      uses: taisei-project/ghaction-import-gpg@v6
-      with:
-        gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
-        passphrase: ${{ secrets.GPG_PASSPHRASE }}
-
     # NOTE: 'fetch-depth: 0' == "get all history", not "no history"
     - name: Checkout Code
       uses: actions/checkout@v4
