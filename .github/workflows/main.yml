@@ -11,6 +11,7 @@ env:
   TAISEI_NOPRELOAD: 0
   TAISEI_PRELOAD_REQUIRED: 1
 
+
 jobs:
   linux-test-build:
     name: Linux (x86)
@@ -21,6 +22,8 @@ jobs:
       uses: actions/checkout@v4
       with:
         submodules: 'recursive'
+        fetch-depth: 0
+        ref: ${{ env.REF }}
 
     - name: Install Python
       uses: actions/setup-python@v5
@@ -53,6 +56,8 @@ jobs:
         meson==${{ env.MESON_VERSION }}
         ninja
         zstandard
+
+        git fetch --force --tags # see: https://github.com/actions/checkout/issues/290
 
     - name: Configure
       run: >
