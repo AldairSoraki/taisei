@@ -4,10 +4,7 @@ name: "Release x86 Builds"
 on:
   push:
     branches:
-      - v[0-9].[0-9]**
-    tags:
-      - v[0-9].[0-9]**
-      - v[0-9].[0-9]**-**
+      - master
 
 env:
   REF: ${{ github.event.inputs.custom-ref || github.ref || 'master' }}
